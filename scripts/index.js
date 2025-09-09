@@ -1,9 +1,9 @@
 jsonPElement = document.getElementById("json");
 
-const fetchAddr = "https://gnftest001-backend.onrender.com/api/get-sentences-on-random-topic?topic=cake";
+const fetchAddr = "https://gnftest001-backend.onrender.com/api/get-sentences-on-random-topic";
 const fetchAddrTest = "http://127.0.0.1:5000/api/get-sentences-on-random-topic";
 
-let addrFetch = fetchAddrTest;
+let addrFetch = fetchAddr;
 
 /*let prevTopic, cacheLeft, sentences, storedTopicSentences;
 
