@@ -8,7 +8,7 @@ const fetchAddrTest = "http://127.0.0.1:5000/api/get-sentences-on-random-topic";
 
 let scrambled_sentence = [];
 
-let addrFetch = fetchAddrTest;
+let addrFetch = fetchAddr;
 
 function chooseRandom(array) {
     return array[Math.floor(Math.random() * array.length)];
