@@ -1,0 +1,14 @@
+* {
+    margin: 5px;
+    font-family: Arial;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+#sentence {
+    opacity: 0;
+    transition: 0.15s;
+}

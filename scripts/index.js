@@ -1,61 +1,20 @@
-jsonPElement = document.getElementById("json");
+const topicElement = document.getElementById("topic");
+const sentenceElement = document.getElementById("sentence");
+const scrambledSentenceElement = document.getElementById("scambled-sentence");
+const userGuessInputElement = document.getElementById("user-guess");
 
 const fetchAddr = "https://gnftest001-backend.onrender.com/api/get-sentences-on-random-topic";
 const fetchAddrTest = "http://127.0.0.1:5000/api/get-sentences-on-random-topic";
 
-let addrFetch = fetchAddr;
+let scrambled_sentence = [];
 
-/*let prevTopic, cacheLeft, sentences, storedTopicSentences;
+let addrFetch = fetchAddrTest;
 
-async function showJSONText() {
-    jsonPElement.innerText = "Loading...";
-    let response, jsonResponse, topic, randomSentence;
-
-    /*let prevTopic = localStorage.getItem('prevTopic') || 'pencil';
-    let cacheLeft = localStorage.getItem('cacheLeft') || 5;
-    let topicSentences = localStorage.getItem('topicSentences');*//*
-
-    if ((Number(cacheLeft) > 0) && sentences) {
-        topic = prevTopic;
-        randomSentence = chooseRandom(JSON.parse(sentences));
-    } else {
-        //localStorage.setItem('cacheLeft', 5);
-        cacheLeft = 5;
-        response = await fetch(addrFetch);
-        jsonResponse = await response.json();
-        //localStorage.setItem('topicSentences', JSON.stringify(jsonResponse[0]));
-        sentences = JSON.stringify(jsonResponse[0]);
-        prevTopic = jsonResponse[2];
-    }
-
-    randomSentence = randomSentence || chooseRandom(jsonResponse[0]);
-    topic = topic || jsonResponse[2];
-    /*localStorage.setItem('prevTopic', topic);
-    localStorage.setItem('cacheLeft', Number(localStorage.getItem('cacheLeft'))-1);*//*
-    cacheLeft--;
-
-    jsonPElement.innerText = `Topic: ${topic}
-Sentence: ${randomSentence}.`;
-
-    /*storedTopicSentences 
-    response = await fetch(addrFetch);
-    jsonResponse = await response.json();
-}*/
-
-//showJSONText();
-
-////////////////////////////////////////////////
 function chooseRandom(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-/* TODO: Keep the objects set empty, and only insert when needed... */
-
-let storedSentences = [
-    /*{topic: null, sentences: null, memoryLeft: 0},
-    {topic: null, sentences: null, memoryLeft: 0},
-    {topic: null, sentences: null, memoryLeft: 0}*/
-]
+let storedSentences = [];
 
 const maxMemory = 3;
 const maxStorage = 3;
@@ -83,7 +42,6 @@ async function fetchSetAndStore() {
         let set = await fetchSet();
         fetchBusy = false;
 
-        //set.memoryLeft--;
         storedSentences.push(set);
         return getUsableSet();
     }
@@ -109,11 +67,10 @@ function waitForUsableSet() {
                 clearInterval(intervalId);
                 resolve(usableSet);
             }
-        }, 250); // Check for a usable set every 250ms
+        }, 250);
     });
 }
 
-/* IT WORKS!!! */
 let waitedForUsableSet = false;
 async function getUsableTopicSentence() {
     let set = getUsableSet();
@@ -126,68 +83,14 @@ async function getUsableTopicSentence() {
             // Otherwise, fetch a new set (and store it).
             set = await fetchSetAndStore();
         }
-    }/* else {
-        set.memoryLeft--;
-    }*/
+    }
 
 
     console.log(`Usable Set: ${JSON.stringify(set.sentences)}`);
     console.log(`got set: ${JSON.stringify(set)}`);
 
-    // if (!fetchBusy) set.memoryLeft--;
     return [set.topic, chooseRandom(set.sentences)];
 }
-
-/*async function getUsableTopicSentence() {
-    let set = getUsableSet();
-
-    if (set) {
-        // If a usable set is found immediately, return it.
-        set.memoryLeft--;
-        console.log(`Usable Set: ${JSON.stringify(set.sentences)}`);
-        return [set.topic, chooseRandom(set.sentences)];
-    }
-
-    // If no usable set is found, we need to handle the fetch logic.
-    // We will wait for a fetch to complete, whether it's an existing one or a new one.
-    
-    // This is the core logical change.
-    // We use a promise to manage the "wait and resolve" behavior.
-    return new Promise(async (resolve, reject) => {
-        let intervalId;
-        const checkAndResolve = () => {
-            const usableSet = getUsableSet();
-            if (usableSet) {
-                if (intervalId) clearInterval(intervalId);
-                usableSet.memoryLeft--;
-                console.log(`Usable Set: ${JSON.stringify(usableSet.sentences)}`);
-                resolve([usableSet.topic, chooseRandom(usableSet.sentences)]);
-            }
-        };
-
-        // First, check if we can start a new fetch.
-        if (!fetchBusy && storedSentences.length < maxStorage) {
-            fetchBusy = true;
-            try {
-                let newSet = await fetchSet();
-                storedSentences.push(newSet);
-            } catch (error) {
-                fetchBusy = false;
-                reject(error); // Reject the promise if the fetch fails
-                return;
-            }
-            fetchBusy = false;
-        }
-
-        // Check immediately after fetch, or if a fetch was already in progress.
-        checkAndResolve();
-
-        // If still no usable set, start polling.
-        if (!getUsableSet()) {
-            intervalId = setInterval(checkAndResolve, 250);
-        }
-    });
-}*/
 
 function getUsableSet() {
     for (let i = 0; i < storedSentences.length; i++) {
@@ -214,58 +117,71 @@ async function fetchSet() {
 
 
 async function showSentence() {
-    jsonPElement.innerText = "Loading...";
+    sentenceElement.style.opacity = 0;
+    userGuessInputElement.value = "";
+    topicElement.innerText = "Loading...";
+    sentenceElement.innerText = "Loading...";
+    scrambledSentenceElement.innerText = "Loading...";
 
     let [topic, sentence] = await getUsableTopicSentence(); // Get usable sentence (from storage or fetch)
     console.log(`Topic: ${topic}\nSentence: ${sentence}.`);
     removeUsedSet(); // Remove used set, if a set becomes used (memory left: 0)
     
-    jsonPElement.innerText = `Topic: ${topic}\nSentence: ${sentence}.`; // Display the topic & sentence
+    topicElement.innerText = `Topic: ${topic}\n`
+    sentenceElement.innerText = `Sentence: ${sentence}${
+        !(sentence.slice(-1).includes('.') || 
+        sentence.slice(-1).includes('?') || 
+        sentence.slice(-1).includes('!')) ? '.' : ''}`; // Display the topic & sentence`
+    
+    scrambled_sentence = scrambleSentence(sentence);
+    scrambledSentenceElement.innerText = `Scramabled Sentence: ${scrambled_sentence}`;
 
     await storeFetchedSet(); // Store new set of sentences for later (if not maxed out)
- 
-    /*storedSentences.forEach(set => {
-        if (set.memoryLeft > 0) {
-            sentenceAvailable = true;
-            return;
-        }
-    });
-
-    if (!sentenceAvailable) {
-        response = await fetch(addrFetch);
-        jsonResponse = await response.json();
-
-        sentences = jsonResponse[0];
-        
-        storedSentences[0].topic = jsonResponse[2];
-        storedSentences[0].sentences = sentences;
-        storedSentences[0].memoryLeft = maxMemory;
-    }
-
-    let done = false;
-    storedSentences.forEach((set) => {
-        if ((set.memoryLeft > 0) && !done) {
-            randomSentence = chooseRandom(set.sentences);
-            jsonPElement.innerText = `Topic: ${set.topic}
-Sentence: ${randomSentence}.`;
-            set.memoryLeft = set.memoryLeft - 1;
-            done = true;
-        }
-    })
-
-    for (let i=0; i<storedSentences.length; i++) {
-        console.log(`loop${i}`);
-        if (storedSentences[i].memoryLeft <= 0) {
-            response = await fetch(addrFetch);
-            jsonResponse = await response.json();
-            sentences = jsonResponse[0];
-            console.log(`LOOPS: ${sentences}`);
-            storedSentences[i].topic = jsonResponse[2];
-            storedSentences[i].sentences = sentences;
-            storedSentences[i].memoryLeft = maxMemory;
-            console.log(`added in storedSentences = ${storedSentences}`);
-        }
-    };
-
-    console.log(`done: ${storedSentences}`);*/
 }
+
+function scrambleSentence(sentence) {
+    const words = sentence.split(' ');
+    const wordsLength = words.length;
+
+    let scrambled_sentence = [];
+
+    for (let _ = 0; _ < wordsLength; _++) {
+        const index = Math.floor(Math.random()*words.length);
+        console.log(index);
+
+        scrambled_sentence.push(words[index]);
+        words.splice(index, 1);   
+    }
+    
+
+    return scrambled_sentence.join(' ');
+}
+
+function checkGuess(event) {
+    if (event.key === 'Enter') {
+        console.log('Pressed Enter')
+        sentenceElement.style.opacity = 1;
+    }
+}
+
+userGuessInputElement.addEventListener('keydown', checkGuess);
+
+/*
+function wordsUsed(scrambled_sentence) {
+    words = scrambled_sentence.split(' ');
+    user_word = userGuessInputElement.value.split(' ');
+
+    for (i in (user_word.length < words.length ? user_word : words)) {
+        used_words = 0
+
+        if (user_word[i] === words[i]) {
+            used_words++;
+            console.log(used_words)
+        }
+    }
+}
+
+while (topicElement.innerText !== "Loading..." || topicElement.innerText !== "Click Get Sentence" || sentenceElement.innerText !== "Loading..." || sentenceElement.innerText !== "Click Get Sentence") {
+    wordsUsed();
+}
+*/
