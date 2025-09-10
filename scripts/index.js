@@ -4,11 +4,11 @@ const scrambledSentenceElement = document.getElementById("scambled-sentence");
 const userGuessInputElement = document.getElementById("user-guess");
 
 const fetchAddr = "https://gnftest001-backend.onrender.com/api/get-sentences-on-random-topic";
-const fetchAddrTest = "http://127.0.0.1:5000/api/get-sentences-on-random-topic";
+const fetchAddrTest = "http://127.0.0.1:10000/api/get-sentences-on-random-topic";
 
 let scrambled_sentence = [];
 
-let addrFetch = fetchAddr;
+let addrFetch = fetchAddr; // Change this according to build.
 
 function chooseRandom(array) {
     return array[Math.floor(Math.random() * array.length)];
@@ -114,7 +114,6 @@ async function fetchSet() {
     let jsonResponse = await response.json();
     return newSet(jsonResponse[2], jsonResponse[0]);
 }
-
 
 async function showSentence() {
     sentenceElement.style.opacity = 0;
