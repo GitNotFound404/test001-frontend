@@ -5,7 +5,7 @@ const userGuessInputElement = document.getElementById("user-guess");
 const fetchAddr = "https://gnftest001-backend.onrender.com/toc128_api/get_sentences_list";
 const fetchAddrTest = "http://127.0.0.1:10000/toc128_api/get_sentences_list/";
 
-let addrFetch = fetchAddrTest; // Change this according to build.
+let addrFetch = fetchAddr; // Change this according to build.
 
 let scrambled_sentence = [];
 let sentences = [];
